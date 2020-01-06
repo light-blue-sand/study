@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.abhs.dao.StudyMapper">
+  <resultMap id="BaseResultMap" type="cn.itcast.abhs.domain.Study">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="learned_time" jdbcType="TIMESTAMP" property="learnedTime" />
+    <result column="finish_status" jdbcType="VARCHAR" property="finishStatus" />
+    <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, learned_time, finish_status, finish_time
+  </sql>
+  <select id="selectByExample" parameterType="cn.itcast.abhs.domain.StudyExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from study
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+<!-- ===============================自定义=======================================================-->
+<!-- ===============================自定义=======================================================-->
+<!-- ===============================自定义=======================================================-->  
+  <select id="selectAllTask" parameterType="cn.itcast.abhs.domain.Study" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from study
+    <where>
+    	<if test="name != null and name !=''">
+    		name like #{name}
+    	</if>
+    	<if test="finishStatus != null and finishStatus!=''">
+    		and finish_status = #{finishStatus}
+    	</if>
+    </where>
+    order by learned_time
+  </select>
+  
+  <select id="selectAll" parameterType="cn.itcast.abhs.domain.Study" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from study
+	where finish_status = '复习中'
+    order by learned_time
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from study
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from study
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.itcast.abhs.domain.StudyExample">
+    delete from study
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.itcast.abhs.domain.Study">
+  	<selectKey keyProperty="id" keyColumn="id" order="AFTER" resultType="long">
+  		select last_insert_id()
+  	</selectKey>
+    insert into study (id, name, learned_time, 
+      finish_status, finish_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{learnedTime,jdbcType=TIMESTAMP}, 
+      #{finishStatus,jdbcType=VARCHAR}, #{finishTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.itcast.abhs.domain.Study">
+    insert into study
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="learnedTime != null">
+        learned_time,
+      </if>
+      <if test="finishStatus != null">
+        finish_status,
+      </if>
+      <if test="finishTime != null">
+        finish_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="learnedTime != null">
+        #{learnedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishStatus != null">
+        #{finishStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="finishTime != null">
+        #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.itcast.abhs.domain.StudyExample" resultType="java.lang.Long">
+    select count(*) from study
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update study
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.learnedTime != null">
+        learned_time = #{record.learnedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.finishStatus != null">
+        finish_status = #{record.finishStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.finishTime != null">
+        finish_time = #{record.finishTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update study
+    set id = #{record.id,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      learned_time = #{record.learnedTime,jdbcType=TIMESTAMP},
+      finish_status = #{record.finishStatus,jdbcType=VARCHAR},
+      finish_time = #{record.finishTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.abhs.domain.Study">
+    update study
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="learnedTime != null">
+        learned_time = #{learnedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishStatus != null">
+        finish_status = #{finishStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="finishTime != null">
+        finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.itcast.abhs.domain.Study">
+    update study
+    set name = #{name,jdbcType=VARCHAR},
+      learned_time = #{learnedTime,jdbcType=TIMESTAMP},
+      finish_status = #{finishStatus,jdbcType=VARCHAR},
+      finish_time = #{finishTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
